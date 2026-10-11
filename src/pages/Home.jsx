@@ -1,11 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchContent } from '../lib/api';
-import { useStoreSync } from '../lib/useStoreSync';
+import { usePageContent } from '../lib/usePageContent';
+import { parseContentList } from '../lib/content-defaults';
+
+const TEASER_CARDS = [
+  { icon: 'fa-user-gear', path: '/about', buttonFallback: 'Buka Halaman About' },
+  { icon: 'fa-cubes', path: '/project', buttonFallback: 'Buka Halaman Project' },
+  { icon: 'fa-location-dot', path: '/contact', buttonFallback: 'Buka Halaman Contact' },
+];
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [content, setContent] = useState(null);
+  const content = usePageContent('home');
+  const teaserCards = parseContentList(content.teaserCards).map((line) => {
+    const [title, description, button] = line.split('|').map((part) => part.trim());
+    return { title, description, button };
+  }).filter((card) => card.title);
   const slides = [
     "./assets/images/slides/slide1.jpg",
     "./assets/images/slides/slide2.jpg",
@@ -21,14 +31,6 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  const load = useCallback(async () => {
-    const { data } = await fetchContent('home');
-    if (data && data.values) setContent(data.values);
-  }, []);
-
-  useEffect(() => { load(); }, [load]);
-  useStoreSync(load);
-
   return (
     <div className="home-page-wrapper">
       <div className="container hero-container" style={{ padding: '40px 0 80px', display: 'flex', flexWrap: 'wrap', gap: '2rem', alignItems: 'center' }}>
@@ -36,7 +38,7 @@ export default function Home() {
         <div className="hero-content" style={{ flex: '1 1 400px' }}>
           <div className="hero-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'var(--surface-color)', padding: '0.5rem 1rem', borderRadius: '2rem', border: '1px solid var(--border-color)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
             <span className="badge-dot" style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span>
-            <span>Available for Freelance & Senior Engineering Roles</span>
+            <span>{content.heroBadge}</span>
           </div>
 
           <h1 className="hero-title" style={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1.2, marginBottom: '1.5rem' }}>
@@ -69,7 +71,7 @@ export default function Home() {
           <div className="hero-stats" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
             <div className="stat-item">
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
-                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-color)' }}>34</span>
+                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-color)' }}>{content.statProjects}</span>
                 <span className="stat-plus" style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--brand-primary)' }}>+</span>
               </div>
               <div className="stat-label" style={{ fontSize: '0.875rem', color: '#6b7280' }}>Proyek Selesai</div>
@@ -77,7 +79,7 @@ export default function Home() {
             <div className="stat-divider" style={{ width: '1px', height: '40px', background: 'var(--border-color)' }}></div>
             <div className="stat-item">
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
-                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-color)' }}>5</span>
+                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-color)' }}>{content.statYears}</span>
                 <span className="stat-plus" style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--brand-primary)' }}>+</span>
               </div>
               <div className="stat-label" style={{ fontSize: '0.875rem', color: '#6b7280' }}>Tahun Pengalaman</div>
@@ -85,7 +87,7 @@ export default function Home() {
             <div className="stat-divider" style={{ width: '1px', height: '40px', background: 'var(--border-color)' }}></div>
             <div className="stat-item">
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
-                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-color)' }}>99</span>
+                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-color)' }}>{content.statSatisfaction}</span>
                 <span className="stat-plus" style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--brand-primary)' }}>%</span>
               </div>
               <div className="stat-label" style={{ fontSize: '0.875rem', color: '#6b7280' }}>Satisfaction Rate</div>
@@ -163,8 +165,8 @@ export default function Home() {
       <section className="home-teasers" style={{ padding: '80px 0', background: 'var(--bg-color)' }}>
         <div className="container">
           <div className="section-title-wrap text-center" style={{ marginBottom: '3rem' }}>
-            <span className="section-subtitle" style={{ color: 'var(--brand-primary)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>Eksplorasi Portfolio</span>
-            <h2 className="section-title" style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Halaman & Layanan Utama</h2>
+            <span className="section-subtitle" style={{ color: 'var(--brand-primary)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>{content.teaserSubtitle}</span>
+            <h2 className="section-title" style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{content.teaserTitle}</h2>
             {content?.aboutTeaser ? (
               <div className="section-description" style={{ margin: '0 auto', maxWidth: '600px', color: '#6b7280' }} dangerouslySetInnerHTML={{ __html: content.aboutTeaser }} />
             ) : (
@@ -175,49 +177,23 @@ export default function Home() {
           </div>
 
           <div className="home-teaser-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-            {/* Card 1: About */}
-            <div className="glass-card teaser-card" style={{ padding: '2rem', borderRadius: '1rem', border: '1px solid var(--border-color)', background: 'var(--surface-color)', transition: 'transform 0.3s' }}>
-              <div className="teaser-icon" style={{ fontSize: '2rem', color: 'var(--brand-primary)', marginBottom: '1rem' }}>
-                <i className="fa-solid fa-user-gear"></i>
-              </div>
-              <h3 className="teaser-title" style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Tentang Saya (About)</h3>
-              <p className="teaser-desc" style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.875rem', lineHeight: 1.6 }}>
-                Pelajari latar belakang profesional, profil perusahaan, rekam jejak, serta layanan kami.
-              </p>
-              <Link to="/about" className="btn btn-outline btn-sm" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid var(--brand-primary)', color: 'var(--brand-primary)', textDecoration: 'none' }}>
-                Buka Halaman About <i className="fa-solid fa-arrow-right"></i>
-              </Link>
-            </div>
-
-            {/* Card 2: Projects */}
-            <div className="glass-card teaser-card" style={{ padding: '2rem', borderRadius: '1rem', border: '1px solid var(--border-color)', background: 'var(--surface-color)', transition: 'transform 0.3s' }}>
-              <div className="teaser-icon" style={{ fontSize: '2rem', color: 'var(--brand-primary)', marginBottom: '1rem' }}>
-                <i className="fa-solid fa-cubes"></i>
-              </div>
-              <h3 className="teaser-title" style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Portofolio Proyek (Project)</h3>
-              <p className="teaser-desc" style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.875rem', lineHeight: 1.6 }}>
-                Temukan koleksi proyek Web App, Mobile App, dan UI/UX Design modern lengkap dengan filter kategori & modal
-                lightbox detail.
-              </p>
-              <Link to="/project" className="btn btn-outline btn-sm" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid var(--brand-primary)', color: 'var(--brand-primary)', textDecoration: 'none' }}>
-                Buka Halaman Project <i className="fa-solid fa-arrow-right"></i>
-              </Link>
-            </div>
-
-            {/* Card 3: Contact */}
-            <div className="glass-card teaser-card" style={{ padding: '2rem', borderRadius: '1rem', border: '1px solid var(--border-color)', background: 'var(--surface-color)', transition: 'transform 0.3s' }}>
-              <div className="teaser-icon" style={{ fontSize: '2rem', color: 'var(--brand-primary)', marginBottom: '1rem' }}>
-                <i className="fa-solid fa-location-dot"></i>
-              </div>
-              <h3 className="teaser-title" style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Kontak & Lokasi (Contact)</h3>
-              <p className="teaser-desc" style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.875rem', lineHeight: 1.6 }}>
-                Hubungi Paul via formulir pesan, nomor WhatsApp, email, serta lihat lokasi studio secara presisi pada
-                Google Maps interaktif.
-              </p>
-              <Link to="/contact" className="btn btn-outline btn-sm" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid var(--brand-primary)', color: 'var(--brand-primary)', textDecoration: 'none' }}>
-                Buka Halaman Contact <i className="fa-solid fa-arrow-right"></i>
-              </Link>
-            </div>
+            {teaserCards.map((card, index) => {
+              const preset = TEASER_CARDS[index] || TEASER_CARDS[0];
+              return (
+                <div key={`${card.title}-${index}`} className="glass-card teaser-card" style={{ padding: '2rem', borderRadius: '1rem', border: '1px solid var(--border-color)', background: 'var(--surface-color)', transition: 'transform 0.3s' }}>
+                  <div className="teaser-icon" style={{ fontSize: '2rem', color: 'var(--brand-primary)', marginBottom: '1rem' }}>
+                    <i className={`fa-solid ${preset.icon}`}></i>
+                  </div>
+                  <h3 className="teaser-title" style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{card.title}</h3>
+                  <p className="teaser-desc" style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.875rem', lineHeight: 1.6 }}>
+                    {card.description}
+                  </p>
+                  <Link to={preset.path} className="btn btn-outline btn-sm" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid var(--brand-primary)', color: 'var(--brand-primary)', textDecoration: 'none' }}>
+                    {card.button || preset.buttonFallback} <i className="fa-solid fa-arrow-right"></i>
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

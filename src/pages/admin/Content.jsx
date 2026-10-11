@@ -3,6 +3,7 @@ import { toast } from 'sonner'
 import { FileText, RotateCcw, Save } from 'lucide-react'
 import { fetchAllContent, saveContent } from '@/lib/api'
 import { CONTENT_FIELDS, CONTENT_SECTIONS } from '@/lib/constants'
+import { CONTENT_DEFAULTS } from '@/lib/content-defaults'
 import PageHeader from '@/components/admin/page-header'
 import RichTextEditor from '@/components/admin/rich-text-editor'
 import EmptyState from '@/components/admin/empty-state'
@@ -33,8 +34,14 @@ export default function Content() {
         setLoading(false)
         return
       }
-      setSections(data || {})
-      setDrafts(JSON.parse(JSON.stringify(data || {})))
+      const merged = Object.fromEntries(
+        CONTENT_SECTIONS.map(({ key }) => [
+          key,
+          { ...(CONTENT_DEFAULTS[key] || {}), ...(data?.[key] || {}) },
+        ]),
+      )
+      setSections(merged)
+      setDrafts(JSON.parse(JSON.stringify(merged)))
       setLoading(false)
     }
 
@@ -78,7 +85,7 @@ export default function Content() {
     window.setTimeout(() => setSavedKey(null), 2500)
   }
 
-  const fields = CONTENT_FIELDS[activeSection] || []
+  const fields = CONTENT_FIELDS[activeSection] || CONTENT_FIELDS.categoryPage || []
 
   return (
     <div className="space-y-5">

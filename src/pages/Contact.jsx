@@ -1,23 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
-import { fetchContent, submitContactMessage } from '../lib/api';
-import { useStoreSync } from '../lib/useStoreSync';
+import { submitContactMessage } from '../lib/api';
+import { usePageContent } from '../lib/usePageContent';
 
 export default function Contact() {
   const [topic, setTopic] = useState('Pengembangan Web / App');
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [content, setContent] = useState(null);
+  const content = usePageContent('contact');
   const [submitting, setSubmitting] = useState(false);
-
-  const load = useCallback(async () => {
-    const { data } = await fetchContent('contact');
-    if (data && data.values) setContent(data.values);
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-  useStoreSync(load);
 
   const handleTopicClick = (selectedTopic) => {
     setTopic(selectedTopic);
@@ -45,10 +35,8 @@ export default function Contact() {
   return (
     <>
       <div className="container">
-        <h1 className="page-banner-title">Hubungi <span className="gradient-text">Saya</span></h1>
-        <p className="page-banner-subtitle">
-          Siap berdiskusi mengenai proyek baru, konsultasi arsitektur IT &amp; Creative Design, atau penawaran kerjasama profesional.
-        </p>
+        <h1 className="page-banner-title"><span className="gradient-text">{content.title}</span></h1>
+        <p className="page-banner-subtitle">{content.subtitle}</p>
         <div className="breadcrumb">
           <a href="/">Home</a>
           <i className="fa-solid fa-angle-right" style={{ margin: '0 10px' }}></i>
@@ -62,10 +50,10 @@ export default function Contact() {
           <div className="contact-status-bar glass-card">
             <div className="status-indicator">
               <span className="status-pulse-dot"></span>
-              <span>Available for Freelance Projects &amp; Full-time Roles</span>
+              <span>{content.availability}</span>
             </div>
             <div className="response-time-tag">
-              <i className="fa-solid fa-bolt" style={{ color: 'var(--amber, #f59e0b)' }}></i> Respon Cepat (Maksimal 1x24 Jam)
+              <i className="fa-solid fa-bolt" style={{ color: 'var(--amber, #f59e0b)' }}></i> {content.responseTime}
             </div>
           </div>
 
@@ -79,9 +67,9 @@ export default function Contact() {
                   <div className="contact-panel-badge">
                     <i className="fa-solid fa-address-card"></i> Direct Contact
                   </div>
-                  <h3 className="contact-panel-title">Informasi &amp; Saluran Kontak</h3>
+                  <h3 className="contact-panel-title">{content.panelTitle}</h3>
                   <p className="contact-panel-desc">
-                    Silakan hubungi Paulus melalui saluran komunikasi di bawah ini atau isi formulir di samping untuk respon cepat.
+                    {content.panelDescription}
                   </p>
                 </div>
 
@@ -93,8 +81,8 @@ export default function Contact() {
                     </div>
                     <div className="contact-details">
                       <span className="contact-card-label">Nama Lengkap &amp; Profesi</span>
-                      <h4 className="contact-card-value">Paulus Petrus P Sianipar</h4>
-                      <span className="sub-text">Creative Designer &amp; IT Specialist</span>
+                      <h4 className="contact-card-value">{content.profileName}</h4>
+                      <span className="sub-text">{content.profession}</span>
                     </div>
                   </div>
 
@@ -117,7 +105,7 @@ export default function Contact() {
                     </div>
                     <div className="contact-details">
                       <span className="contact-card-label">No. Handphone / WhatsApp Direct</span>
-                      <h4 className="contact-card-value"><a href={`https://wa.me/${(content?.whatsapp || '6285162744708').replace(/\D/g, '')}`} target="_blank" rel="noreferrer">{content?.whatsapp || '+62 85162744708 (WA Only)'}</a></h4>
+                      <h4 className="contact-card-value"><a href={`https://wa.me/${(content.whatsapp || '6285162744708').replace(/\D/g, '')}`} target="_blank" rel="noreferrer">{content.phone || content.whatsapp}</a></h4>
                       <span className="sub-text" style={{ color: 'var(--emerald, #10b981)', fontWeight: 500 }}>● Online Chat via WhatsApp</span>
                     </div>
                   </div>
@@ -141,8 +129,8 @@ export default function Contact() {
                     </div>
                     <div className="contact-details">
                       <span className="contact-card-label">Jam Operasional &amp; Respon</span>
-                      <h4 className="contact-card-value">Senin - Sabtu: 08:00 - 20:00 WIB</h4>
-                      <span className="sub-text">Respon pesan masuk &lt; 2 jam</span>
+                      <h4 className="contact-card-value">{content.hours}</h4>
+                      <span className="sub-text">{content.responseNote}</span>
                     </div>
                   </div>
                 </div>
@@ -170,9 +158,9 @@ export default function Contact() {
             <div className="glass-card form-wrapper-modern">
               <div className="form-header-badge">
                 <span className="badge-quick-tag"><i className="fa-solid fa-paper-plane"></i> Kirim Pesan</span>
-                <h3 className="form-title-modern">Kirim Pesan Langsung</h3>
+                <h3 className="form-title-modern">{content.formTitle}</h3>
                 <p className="form-subtitle-modern">
-                  Isi formulir di bawah ini untuk mengirim pesan. Kami akan membalas pesan Anda sesegera mungkin.
+                  {content.formSubtitle}
                 </p>
               </div>
 
@@ -248,11 +236,11 @@ export default function Contact() {
                   <i className="fa-solid fa-map-location-dot"></i>
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Lokasi Studio &amp; Peta Google Maps</h3>
-                  <p style={{ color: '#6b7280', fontSize: '0.88rem' }}>Clarista Promosi, Jawa Barat, Indonesia</p>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>{content.mapTitle}</h3>
+                  <p style={{ color: '#6b7280', fontSize: '0.88rem' }}>{content.mapDescription}</p>
                 </div>
               </div>
-              <a href="https://www.google.com/maps/place/Clarista+Promosi/" target="_blank" rel="noreferrer" className="btn btn-outline btn-sm">
+              <a href={content.mapLink} target="_blank" rel="noreferrer" className="btn btn-outline btn-sm">
                 <i className="fa-solid fa-arrow-up-right-from-square"></i> Buka Google Maps
               </a>
             </div>

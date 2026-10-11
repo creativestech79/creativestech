@@ -1,31 +1,28 @@
-import { useState, useEffect, useCallback } from 'react';
-import { fetchContent } from '../lib/api';
-import { useStoreSync } from '../lib/useStoreSync';
+import { usePageContent } from '../lib/usePageContent';
+import { parseContentList } from '../lib/content-defaults';
+
+const SKILL_ICONS = [
+  ['fa-solid fa-palette', '#38bdf8'],
+  ['fa-brands fa-laravel', '#ff2d20'],
+  ['fa-solid fa-database', '#06b6d4'],
+  ['fa-brands fa-figma', '#a855f7'],
+  ['fa-solid fa-video', '#f59e0b'],
+];
 
 export default function About() {
-  const [content, setContent] = useState(null);
-  const [contact, setContact] = useState(null);
-
-  const load = useCallback(async () => {
-    const [aboutResult, contactResult] = await Promise.all([
-      fetchContent('about'),
-      fetchContent('contact'),
-    ]);
-    if (aboutResult.data && aboutResult.data.values) setContent(aboutResult.data.values);
-    if (contactResult.data && contactResult.data.values) setContact(contactResult.data.values);
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-  useStoreSync(load);
+  const content = usePageContent('about');
+  const contact = usePageContent('contact');
+  const skills = parseContentList(content.skills).map((line) => {
+    const [name, description, percentage] = line.split('|').map((part) => part.trim());
+    return { name, description, percentage: Number(percentage) || 0 };
+  }).filter((skill) => skill.name);
 
   return (
     <>
       <div className="container">
         <h1 className="page-banner-title">{content?.title || <><span className="gradient-text">Tentang Kami</span></>}</h1>
         <p className="page-banner-subtitle">
-          Mengenal lebih dekat profil profesional kami, spesialisasi keahlian teknis, dan layanan IT & Design yang kami tawarkan.
+          {content.subtitle}
         </p>
         <div className="breadcrumb">
           <a href="/">Home</a>
@@ -42,7 +39,7 @@ export default function About() {
               {/* Left Column: Portrait Photo with Glow */}
               <div className="about-image-wrapper">
                 <div className="about-image-card">
-                  <img src="/assets/images/profile.png" alt="Paulus Petrus P Sianipar" className="about-img" id="profileImage" />
+                  <img src={content.profileImage} alt={content.profileName} className="about-img" id="profileImage" />
                   <div className="about-image-badge"></div>
                 </div>
               </div>
@@ -53,11 +50,11 @@ export default function About() {
                 <div className="biodata-grid" style={{ marginBottom: '28px' }}>
                   <div className="biodata-item">
                     <span className="bio-label"><i className="fa-solid fa-id-card"></i> Nama Lengkap</span>
-                    <span className="bio-value">Paulus Petrus P Sianipar</span>
+                    <span className="bio-value">{content.profileName}</span>
                   </div>
                   <div className="biodata-item">
                     <span className="bio-label"><i className="fa-solid fa-user-gear"></i> Profesi</span>
-                    <span className="bio-value">Creative Designer &amp; IT</span>
+                    <span className="bio-value">{content.profession}</span>
                   </div>
                   <div className="biodata-item">
                     <span className="bio-label"><i className="fa-solid fa-location-dot"></i> Lokasi</span>
@@ -79,7 +76,7 @@ export default function About() {
 
                 {/* Profile Heading & Description Text (Positioned BELOW) */}
                 <h3 className="about-heading">
-                  Creative Designer &amp; IT Specialist
+                  {content.profileHeading}
                 </h3>
                 {content?.description ? (
                   <div className="about-text" dangerouslySetInnerHTML={{ __html: content.description }} />
@@ -117,104 +114,33 @@ export default function About() {
             <div style={{ marginTop: '70px' }}>
               <div className="section-title-wrap text-center">
                 <span className="section-subtitle">Keahlian Utama</span>
-                <h2 className="section-title">Skill &amp; Spesialisasi</h2>
+                <h2 className="section-title">{content.skillHeading}</h2>
               </div>
 
               <div className="skills-grid">
-                {/* Skill 1: Creative Design */}
-                <div className="glass-card skill-card">
-                  <div className="skill-header">
-                    <div className="skill-name-wrap">
-                      <div className="skill-icon-box">
-                        <i className="fa-solid fa-palette" style={{ color: '#38bdf8' }}></i>
+                {skills.map((skill, index) => {
+                  const [icon, color] = SKILL_ICONS[index % SKILL_ICONS.length];
+                  const percentage = Math.min(100, Math.max(0, skill.percentage));
+                  return (
+                    <div key={`${skill.name}-${index}`} className="glass-card skill-card">
+                      <div className="skill-header">
+                        <div className="skill-name-wrap">
+                          <div className="skill-icon-box">
+                            <i className={icon} style={{ color }}></i>
+                          </div>
+                          <div className="skill-title-group">
+                            <h4 className="skill-name">{skill.name}</h4>
+                            <p className="skill-subtext">{skill.description}</p>
+                          </div>
+                        </div>
+                        <div className="skill-percentage">{percentage}%</div>
                       </div>
-                      <div className="skill-title-group">
-                        <h4 className="skill-name">Creative Design</h4>
-                        <p className="skill-subtext">Adobe Illustrator, Photoshop, Premiere, Canva, InDesign</p>
-                      </div>
-                    </div>
-                    <div className="skill-percentage">95%</div>
-                  </div>
-                  <div className="skill-bar-bg">
-                    <div className="skill-bar-fill" style={{ width: '95%' }}></div>
-                  </div>
-                </div>
-
-                {/* Skill 2: Multimedia */}
-                <div className="glass-card skill-card">
-                  <div className="skill-header">
-                    <div className="skill-name-wrap">
-                      <div className="skill-icon-box">
-                        <i className="fa-brands fa-laravel" style={{ color: '#ff2d20' }}></i>
-                      </div>
-                      <div className="skill-title-group">
-                        <h4 className="skill-name">Multimedia</h4>
-                        <p className="skill-subtext">Photoshoot, Videoshoot, Photo Editing, Video Editing</p>
+                      <div className="skill-bar-bg">
+                        <div className="skill-bar-fill" style={{ width: `${percentage}%` }}></div>
                       </div>
                     </div>
-                    <div className="skill-percentage">90%</div>
-                  </div>
-                  <div className="skill-bar-bg">
-                    <div className="skill-bar-fill" style={{ width: '90%' }}></div>
-                  </div>
-                </div>
-
-                {/* Skill 3: IT Consultant */}
-                <div className="glass-card skill-card">
-                  <div className="skill-header">
-                    <div className="skill-name-wrap">
-                      <div className="skill-icon-box">
-                        <i className="fa-solid fa-database" style={{ color: '#06b6d4' }}></i>
-                      </div>
-                      <div className="skill-title-group">
-                        <h4 className="skill-name">IT Consultant</h4>
-                        <p className="skill-subtext">Networking, Maintenance, Installation, Repair</p>
-                      </div>
-                    </div>
-                    <div className="skill-percentage">80%</div>
-                  </div>
-                  <div className="skill-bar-bg">
-                    <div className="skill-bar-fill" style={{ width: '80%' }}></div>
-                  </div>
-                </div>
-
-                {/* Skill 4: Web Development */}
-                <div className="glass-card skill-card">
-                  <div className="skill-header">
-                    <div className="skill-name-wrap">
-                      <div className="skill-icon-box">
-                        <i className="fa-brands fa-figma" style={{ color: '#a855f7' }}></i>
-                      </div>
-                      <div className="skill-title-group">
-                        <h4 className="skill-name">Web Development</h4>
-                        <p className="skill-subtext">Web Develop, Web Hosting, Domain</p>
-                      </div>
-                    </div>
-                    <div className="skill-percentage">75%</div>
-                  </div>
-                  <div className="skill-bar-bg">
-                    <div className="skill-bar-fill" style={{ width: '75%' }}></div>
-                  </div>
-                </div>
-                
-                {/* Skill 5: CCTV Specialist */}
-                <div className="glass-card skill-card">
-                  <div className="skill-header">
-                    <div className="skill-name-wrap">
-                      <div className="skill-icon-box">
-                        <i className="fa-solid fa-video" style={{ color: '#f59e0b' }}></i>
-                      </div>
-                      <div className="skill-title-group">
-                        <h4 className="skill-name">CCTV Specialist</h4>
-                        <p className="skill-subtext">Instalasi, Setting</p>
-                      </div>
-                    </div>
-                    <div className="skill-percentage">80%</div>
-                  </div>
-                  <div className="skill-bar-bg">
-                    <div className="skill-bar-fill" style={{ width: '80%' }}></div>
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
           </div>

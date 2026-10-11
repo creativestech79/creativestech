@@ -53,8 +53,8 @@ export default function AppSidebar({ user, role, onNavigate }) {
           <Sparkles className="h-5 w-5" />
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold leading-tight">Paul Design</p>
-          <p className="truncate text-[11px] leading-tight text-muted-foreground">&amp; IT Solution</p>
+          <p className="truncate text-sm font-bold leading-tight">CreativeTech</p>
+          <p className="truncate text-[11px] leading-tight text-muted-foreground">Design &amp; IT Solution</p>
         </div>
       </div>
 

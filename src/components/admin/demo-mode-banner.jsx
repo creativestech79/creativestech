@@ -11,7 +11,7 @@ export default function DemoModeBanner() {
       variant="warning"
       icon={DatabaseZap}
       title="Mode Demo — Supabase belum terhubung"
-      description="Masih memakai data contoh lokal. Tambahkan VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY pada file .env lalu jalankan kembali untuk menyimpan data sungguhan ke database."
+      description="Masih memakai data contoh lokal. Tambahkan VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY pada file .env.local, lalu hentikan dan jalankan ulang server (npm run dev) untuk memakai database."
     />
   )
 }

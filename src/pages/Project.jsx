@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchProjects } from '../lib/api';
+import { usePageContent } from '../lib/usePageContent';
 import { useStoreSync } from '../lib/useStoreSync';
 
 // Mapping category key dari API ke label tampilan & route
@@ -30,6 +31,7 @@ const DEFAULT_PROJECTS = [
 ];
 
 export default function Project() {
+  const content = usePageContent('project');
   const [activeFilter, setActiveFilter] = useState('all');
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,10 +58,8 @@ export default function Project() {
   return (
     <>
       <div className="container">
-        <h1 className="page-banner-title">Portofolio <span className="gradient-text">Proyek</span></h1>
-        <p className="page-banner-subtitle">
-          Koleksi karya terbaik meliputi Creative Design, Multimedia, IT Consultant, Web Development, CCTV Specialist
-        </p>
+        <h1 className="page-banner-title"><span className="gradient-text">{content.title}</span></h1>
+        <p className="page-banner-subtitle">{content.subtitle}</p>
         <div className="breadcrumb">
           <a href="/">Home</a>
           <i className="fa-solid fa-angle-right" style={{ margin: '0 10px' }}></i>

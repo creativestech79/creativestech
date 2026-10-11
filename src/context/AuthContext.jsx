@@ -207,6 +207,31 @@ export function AuthProvider({ children }) {
     return { success: true }
   }, [])
 
+  const signUp = useCallback(async (name, email, password) => {
+    const cleanName = String(name || '').trim()
+    const cleanEmail = String(email || '').trim().toLowerCase()
+
+    if (!cleanName || !cleanEmail || !password) {
+      return { success: false, error: 'Nama, email, dan password wajib diisi.' }
+    }
+
+    if (!isSupabaseConfigured) {
+      return { success: false, error: 'Pendaftaran hanya tersedia setelah Supabase terhubung.' }
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email: cleanEmail,
+      password,
+      options: {
+        data: { full_name: cleanName },
+        emailRedirectTo: window.location.origin,
+      },
+    })
+
+    if (error) return { success: false, error: error.message }
+    return { success: true, needsEmailConfirmation: !data.session }
+  }, [])
+
   const signOut = useCallback(async () => {
     if (isSupabaseConfigured) {
       const { error } = await supabase.auth.signOut()
@@ -239,9 +264,10 @@ export function AuthProvider({ children }) {
       loading,
       isDemo: !isSupabaseConfigured,
       signIn,
+      signUp,
       signOut,
     }
-  }, [session, profile, loading, signIn, signOut])
+  }, [session, profile, loading, signIn, signUp, signOut])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

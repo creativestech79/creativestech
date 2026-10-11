@@ -6,6 +6,8 @@ Halaman publik: `/` (Home), `/about` (About), `/project` (Project), `/project/:s
 
 Portal admin berada di `/admin` (sidebar) dengan menu Ringkasan, Project, Konten Website, Pesan Masuk, Pengguna, Pengaturan, dan Log Aktivitas. Konten/proyek yang diubah admin langsung tampil di website publik, dan pesan dari formulir kontak masuk ke menu **Pesan Masuk**.
 
+Menu **Konten Website** mengelola teks Beranda, Tentang Kami, Project, Creative Design, Multimedia, Web Development, CCTV Specialist, dan Kontak. Daftar project/portofolio (tambah, ubah, hapus, serta status terbit) dikelola terpisah lewat menu **Project**. Setelah menyimpan konten, buka halaman publik terkait untuk melihat hasilnya.
+
 ## Jalankan lokal
 
 ```bash
@@ -29,7 +31,7 @@ VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 
 Untuk menjalankan endpoint undangan/hapus anggota secara lokal, gunakan `vercel dev` dan tambahkan juga `SUPABASE_URL`, `SUPABASE_ANON_KEY`, serta `SUPABASE_SERVICE_ROLE_KEY`. Service-role key hanya dipakai endpoint server; jangan beri awalan `VITE_` dan jangan pernah mengirimnya ke browser.
 
-4. Daftarkan akun melalui halaman Register. Trigger database otomatis menetapkan role `user`; metadata signup tidak dapat memilih role.
+4. Untuk membuka pendaftaran publik, aktifkan **Izinkan Pendaftaran Publik** di **Admin → Pengaturan Sistem**. Pastikan pendaftaran email juga diaktifkan pada Supabase **Authentication → Providers → Email**. Setelah itu, daftarkan akun melalui halaman Register. Trigger database otomatis menetapkan role `user`; metadata signup tidak dapat memilih role.
 5. Tetapkan admin pertama lewat SQL Editor menggunakan email akun yang sudah terdaftar:
 
 ```sql

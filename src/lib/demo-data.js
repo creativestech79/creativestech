@@ -3,6 +3,7 @@
  * Dipakai ketika variabel lingkungan Supabase belum diisi,
  * sehingga Admin Panel tetap bisa dijalankan & diuji.
  */
+import { CONTENT_DEFAULTS } from './content-defaults'
 
 const now = Date.now()
 const daysAgo = (n) => new Date(now - n * 24 * 60 * 60 * 1000).toISOString()
@@ -118,35 +119,7 @@ export const DEMO_PROJECTS = [
   },
 ]
 
-export const DEMO_CONTENT = {
-  home: {
-    heroTitle: 'Membangun Solusi Digital Eksklusif & Skalabel',
-    heroSubtitle:
-      'Menggabungkan keahlian mendalam pada pengembangan Creative Design & Full-Stack Web, arsitektur cloud performa tinggi, serta estetika UI/UX modern untuk menciptakan pengalaman digital terbaik.',
-    heroButton: 'Lihat Portofolio Proyek',
-    aboutTeaser:
-      '<p>Jelajahi halaman lengkap kami untuk melihat profil, proyek terbaru, serta informasi kontak dan lokasi studio.</p>',
-  },
-  about: {
-    title: 'Tentang Saya',
-    description:
-      '<p>Saya memfokuskan karir profesional saya untuk membantu perusahaan dan pemangku kepentingan membangun produk digital berskala industri. Berbekal pemahaman arsitektur perangkat lunak yang matang serta dorongan estetika visual, saya percaya setiap karya desain dan baris kode harus berdampak langsung pada kecepatan, kenyamanan, dan kepuasan pengguna.</p>',
-    vision: 'Menjadi profesional kreatif & teknologi yang dipercaya dalam menghadirkan solusi digital berdampak.',
-    mission: 'Menghadirkan karya desain dan sistem yang andal, inovatif, serta tepat waktu bagi setiap klien.',
-  },
-  contact: {
-    email: 'paulussianipar@gmail.com',
-    phone: '+62 85162744708',
-    whatsapp: '+62 85162744708',
-    address: 'Bekasi, Jawa Barat, Indonesia',
-    mapUrl:
-      'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15863.599745942689!2d106.9366402!3d-6.2768852!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e698d125bf98c8d%3A0x97a7268772a6e067!2sClarista%20Promosi!5e0!3m2!1sen!2sid!4v1790405655792!5m2!1sen!2sid',
-  },
-  services: {
-    intro:
-      '<p>Kami menyediakan layanan Creative Design, Multimedia, IT Consultant, Web Development, dan pemasangan CCTV.</p>',
-  },
-}
+export const DEMO_CONTENT = CONTENT_DEFAULTS
 
 export const DEMO_SETTINGS = {
   siteName: 'Paul Design & IT Solution',

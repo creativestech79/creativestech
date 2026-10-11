@@ -1,20 +1,43 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
+import { fetchSettings } from '@/lib/api';
 import { Eye, EyeOff, Loader2, Lock, LogIn } from 'lucide-react';
 
 export default function Login() {
-  const { signIn, user, isAdmin, loading } = useAuth();
+  const { signIn, signUp, user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [isRegister, setIsRegister] = useState(false);
+  const [registrationEnabled, setRegistrationEnabled] = useState(false);
+  const [settingsLoading, setSettingsLoading] = useState(true);
+  const [settingsError, setSettingsError] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchSettings().then(({ data, error }) => {
+      if (cancelled) return;
+      if (error) {
+        setSettingsError(true);
+        toast.error(`Gagal memeriksa pengaturan pendaftaran: ${error}`);
+      } else {
+        setRegistrationEnabled(Boolean(data?.allowRegistration));
+      }
+      setSettingsLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Bila sudah login, arahkan ke tempat yang sesuai
   if (!loading && user) {
@@ -26,12 +49,35 @@ export default function Login() {
     e.preventDefault();
     if (submitting) return;
 
+    setSubmitting(true);
     if (isRegister) {
-      toast.info('Pendaftaran publik belum tersedia. Silakan hubungi admin.');
+      if (settingsLoading || settingsError || !registrationEnabled) {
+        setSubmitting(false);
+        toast.error(
+          settingsError
+            ? 'Pengaturan pendaftaran tidak dapat diperiksa. Silakan coba lagi.'
+            : 'Pendaftaran publik belum diaktifkan. Silakan hubungi admin.',
+        );
+        return;
+      }
+
+      const result = await signUp(name, email, password);
+      setSubmitting(false);
+      if (!result.success) {
+        toast.error(result.error || 'Pendaftaran gagal.');
+        return;
+      }
+
+      if (result.needsEmailConfirmation) {
+        toast.success('Pendaftaran berhasil. Silakan periksa email untuk konfirmasi.');
+        setIsRegister(false);
+        setPassword('');
+      } else {
+        toast.success('Pendaftaran berhasil. Selamat datang!');
+      }
       return;
     }
 
-    setSubmitting(true);
     const result = await signIn(email, password);
     setSubmitting(false);
 
@@ -183,4 +229,3 @@ export default function Login() {
     </div>
   );
 }
-

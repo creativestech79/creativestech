@@ -10,14 +10,26 @@
 -- ============================================================
 
 -- ─────────────────────────── ENUM ───────────────────────────
-create type public.user_role as enum ('admin', 'editor', 'user');
-create type public.user_status as enum ('active', 'inactive');
-create type public.project_status as enum ('published', 'draft', 'archived');
-create type public.audit_action as enum ('create', 'update', 'delete', 'upload', 'login', 'logout');
+do $$ begin
+  create type public.user_role as enum ('admin', 'editor', 'user');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type public.user_status as enum ('active', 'inactive');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type public.project_status as enum ('published', 'draft', 'archived');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type public.audit_action as enum ('create', 'update', 'delete', 'upload', 'login', 'logout');
+exception when duplicate_object then null;
+end $$;
 
 -- ─────────────────────────── PROFILES ───────────────────────
 -- Profil pengguna; id merujuk auth.users.id.
-create table public.profiles (
+create table if not exists public.profiles (
   id          uuid primary key references auth.users (id) on delete cascade,
   name        text not null default '',
   email       text not null,
@@ -46,6 +58,7 @@ begin
 end;
 $$;
 
+drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
@@ -53,7 +66,7 @@ create trigger on_auth_user_created
 -- ─────────────────────────── PROJECTS ───────────────────────
 -- projects.images menyimpan array { path, url, name }
 -- untuk gambar yang diunggah ke Storage bucket `project-images`.
-create table public.projects (
+create table if not exists public.projects (
   id          uuid primary key default gen_random_uuid(),
   title       text not null,
   slug        text not null unique,
@@ -71,8 +84,8 @@ create table public.projects (
 );
 
 -- ─────────────────────────── CONTENT ────────────────────────
--- CMS key-value per section (home/about/contact/services).
-create table public.content (
+-- CMS key-value per halaman (home/about/project/category/contact).
+create table if not exists public.content (
   id          uuid primary key default gen_random_uuid(),
   key         text not null unique,     -- 'home' | 'about' | ...
   value       jsonb not null default '{}'::jsonb,
@@ -84,7 +97,7 @@ create table public.content (
 -- Kolom memakai snake_case (konvensi SQL). Aplikasi (src/lib/api.js)
 -- memetakan ke camelCase (siteName, contactEmail, dst.) saat
 -- fetchSettings / saveSettings — lihat SETTINGS_FIELDS_MAP.
-create table public.settings (
+create table if not exists public.settings (
   id                 uuid primary key default gen_random_uuid(),
   site_name          text not null default 'Paul Design & IT Solution',
   tagline            text default '',
@@ -97,13 +110,14 @@ create table public.settings (
 );
 
 -- Isi baris pengaturan awal.
-insert into public.settings (id, site_name) values (gen_random_uuid(), 'Paul Design & IT Solution')
-on conflict do nothing;
+insert into public.settings (id, site_name)
+select gen_random_uuid(), 'Paul Design & IT Solution'
+where not exists (select 1 from public.settings);
 
 -- ─────────────────────── CONTACT MESSAGES ───────────────────
 -- Pesan dari formulir kontak publik. Siapa pun boleh mengirim,
 -- hanya staff yang boleh membaca & mengelola.
-create table public.contact_messages (
+create table if not exists public.contact_messages (
   id          uuid primary key default gen_random_uuid(),
   name        text not null,
   email       text not null,
@@ -114,7 +128,7 @@ create table public.contact_messages (
 );
 
 -- ─────────────────────────── AUDIT LOG ──────────────────────
-create table public.audit_logs (
+create table if not exists public.audit_logs (
   id          uuid primary key default gen_random_uuid(),
   actor_email text,
   action      public.audit_action not null,
@@ -133,6 +147,9 @@ begin
 end;
 $$;
 
+drop trigger if exists trg_profiles_updated_at on public.profiles;
+drop trigger if exists trg_projects_updated_at on public.projects;
+drop trigger if exists trg_settings_updated_at on public.settings;
 create trigger trg_profiles_updated_at before update on public.profiles
   for each row execute function public.set_updated_at();
 create trigger trg_projects_updated_at before update on public.projects
@@ -163,6 +180,10 @@ $$;
 -- PROFILES
 -- Semua orang boleh melihat daftar pengguna (untuk dropdown publik),
 -- tapi pembaruan dibatasi: pemilik sendiri atau staff.
+drop policy if exists "read_profiles_public" on public.profiles;
+drop policy if exists "update_own_profile" on public.profiles;
+drop policy if exists "staff_manage_profiles" on public.profiles;
+drop policy if exists "staff_delete_profiles" on public.profiles;
 create policy "read_profiles_public"
   on public.profiles for select using (true);
 
@@ -183,6 +204,11 @@ create policy "staff_delete_profiles"
 
 -- PROJECTS
 -- Publik hanya membaca yang ter-publish.
+drop policy if exists "read_published_projects" on public.projects;
+drop policy if exists "staff_read_all_projects" on public.projects;
+drop policy if exists "staff_write_projects" on public.projects;
+drop policy if exists "staff_update_projects" on public.projects;
+drop policy if exists "staff_delete_projects" on public.projects;
 create policy "read_published_projects"
   on public.projects for select
   using (status = 'published');
@@ -206,6 +232,10 @@ create policy "staff_delete_projects"
 
 -- CONTENT & SETTINGS
 -- Publik boleh membaca konten halaman & pengaturan umum.
+drop policy if exists "read_content_public" on public.content;
+drop policy if exists "staff_write_content" on public.content;
+drop policy if exists "read_settings_public" on public.settings;
+drop policy if exists "staff_write_settings" on public.settings;
 create policy "read_content_public"
   on public.content for select using (true);
 create policy "staff_write_content"
@@ -224,6 +254,8 @@ create policy "staff_write_settings"
 -- Hanya staff yang boleh membaca log; sistem menulis via service/anon
 -- dari sisi aplikasi (insert diperbolehkan untuk anon karena endpoint
 -- aplikasi yang memanggil).
+drop policy if exists "staff_read_audit" on public.audit_logs;
+drop policy if exists "app_write_audit" on public.audit_logs;
 create policy "staff_read_audit"
   on public.audit_logs for select
   using (public.is_staff());
@@ -234,6 +266,10 @@ create policy "app_write_audit"
 -- CONTACT MESSAGES
 -- Publik (anon) boleh mengirim pesan; hanya staff yang boleh membaca,
 -- menandai dibaca, atau menghapusnya.
+drop policy if exists "public_submit_contact" on public.contact_messages;
+drop policy if exists "staff_read_contact" on public.contact_messages;
+drop policy if exists "staff_update_contact" on public.contact_messages;
+drop policy if exists "staff_delete_contact" on public.contact_messages;
 create policy "public_submit_contact"
   on public.contact_messages for insert
   with check (true);
@@ -261,18 +297,16 @@ create policy "staff_delete_contact"
 --     ('project-images', 'project-images', true);
 --
 -- Policy untuk membaca gambar publik:
+drop policy if exists "read_project_images" on storage.objects;
+drop policy if exists "staff_upload_project_images" on storage.objects;
+drop policy if exists "staff_update_project_images" on storage.objects;
+drop policy if exists "staff_delete_project_images" on storage.objects;
 create policy "read_project_images"
   on storage.objects for select using (
     bucket_id = 'project-images'
   );
 
 -- Policy menulis/update/delete: hanya staff.
-create or replace function public.is_staff_or_file_owner()
-returns boolean language sql stable as $$
-  select public.is_staff()
-      or (storage.foldername(name))[1] = auth.uid()::text;
-$$;
-
 create policy "staff_upload_project_images"
   on storage.objects for insert
   with check (bucket_id = 'project-images' and public.is_staff());
