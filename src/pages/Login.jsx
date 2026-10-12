@@ -12,8 +12,9 @@ export default function Login() {
 
   const [isRegister, setIsRegister] = useState(false);
   const [registrationEnabled, setRegistrationEnabled] = useState(false);
-  const [settingsLoading, setSettingsLoading] = useState(true);
+  const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsError, setSettingsError] = useState(false);
+  const [registrationRetry, setRegistrationRetry] = useState(0);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -21,7 +22,11 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (!isRegister) return undefined;
+
     let cancelled = false;
+    setSettingsLoading(true);
+    setSettingsError(false);
 
     async function checkRegistrationSettings() {
       try {
@@ -29,7 +34,7 @@ export default function Login() {
         if (cancelled) return;
         if (error) {
           setSettingsError(true);
-          toast.error(`Pengaturan pendaftaran gagal dimuat: ${error}`);
+          console.error('Pengaturan pendaftaran gagal dimuat:', error);
           return;
         }
         setRegistrationEnabled(Boolean(data?.allowRegistration));
@@ -37,9 +42,6 @@ export default function Login() {
         if (cancelled) return;
         console.error('Gagal memeriksa pengaturan pendaftaran:', error);
         setSettingsError(true);
-        toast.error(
-          'Tidak dapat terhubung ke Supabase untuk memeriksa pendaftaran. Periksa koneksi internet dan pengaturan Supabase, lalu muat ulang halaman.',
-        );
       } finally {
         if (!cancelled) setSettingsLoading(false);
       }
@@ -50,7 +52,7 @@ export default function Login() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isRegister, registrationRetry]);
 
   // Bila sudah login, arahkan ke tempat yang sesuai
   if (!loading && user) {
@@ -167,6 +169,39 @@ export default function Login() {
           </div>
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {isRegister && settingsLoading && (
+              <p role="status" style={{ margin: 0, color: '#6b7280', fontSize: '0.85rem' }}>
+                Memeriksa apakah pendaftaran tersedia...
+              </p>
+            )}
+            {isRegister && settingsError && (
+              <div role="alert" style={{ color: '#b91c1c', fontSize: '0.85rem' }}>
+                Pengaturan pendaftaran tidak dapat dimuat. Periksa koneksi internet dan konfigurasi
+                Supabase, lalu coba lagi.
+                <button
+                  type="button"
+                  onClick={() => setRegistrationRetry((retry) => retry + 1)}
+                  style={{
+                    display: 'block',
+                    marginTop: '0.4rem',
+                    padding: 0,
+                    border: 'none',
+                    background: 'none',
+                    color: 'var(--brand-primary)',
+                    font: 'inherit',
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                  }}
+                >
+                  Coba lagi
+                </button>
+              </div>
+            )}
+            {isRegister && !settingsLoading && !settingsError && !registrationEnabled && (
+              <p role="status" style={{ margin: 0, color: '#6b7280', fontSize: '0.85rem' }}>
+                Pendaftaran publik belum diaktifkan. Silakan hubungi admin.
+              </p>
+            )}
             {isRegister && (
               <div>
                 <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem', fontWeight: 500 }}>Nama Lengkap</label>

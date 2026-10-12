@@ -21,8 +21,8 @@ const DEMO_SESSION_KEY = 'pdits.demo.session'
 
 /** Akun demo yang bisa dipakai saat Supabase belum terhubung. */
 export const DEMO_ACCOUNTS = [
-  { email: 'admin@pauldesign.co.id', password: 'admin123', role: 'admin', name: 'Paulus Petrus P Sianipar' },
-  { email: 'editor@pauldesign.co.id', password: 'editor123', role: 'editor', name: 'Editor Website' },
+  { email: 'admin@creativestech.vercel.app', password: 'admin123', role: 'admin', name: 'Paulus Petrus P Sianipar' },
+  { email: 'editor@creativestech.vercel.app', password: 'editor123', role: 'editor', name: 'Editor Website' },
 ]
 
 function readDemoSession() {
@@ -175,15 +175,28 @@ export function AuthProvider({ children }) {
       return { success: true }
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: cleanEmail,
-      password,
-    })
+    let data
+    let error
+    try {
+      const result = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password,
+      })
+      data = result.data
+      error = result.error
+    } catch (requestError) {
+      console.error('Gagal menghubungi Supabase saat login:', requestError)
+      return {
+        success: false,
+        error:
+          'Tidak dapat terhubung ke server login. Periksa koneksi internet dan pengaturan URL Supabase, lalu coba lagi.',
+      }
+    }
 
     if (error) {
       const message =
         error.message === 'Invalid login credentials'
-          ? 'Email atau password salah. Akun demo hanya berlaku saat Supabase belum terhubung. Jika Supabase aktif, daftarkan akun di Supabase Auth dan atur perannya di tabel profiles.'
+          ? 'Email atau password salah. Pastikan akun sudah dibuat di Supabase Auth.'
           : error.message
       return { success: false, error: message }
     }

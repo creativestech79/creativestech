@@ -35,8 +35,16 @@ export default function AdminLogin() {
     if (submitting) return
     setSubmitting(true)
 
-    const result = await signIn(email, password)
-    setSubmitting(false)
+    let result
+    try {
+      result = await signIn(email, password)
+    } catch (error) {
+      console.error('Gagal saat mencoba masuk:', error)
+      toast.error('Terjadi kendala saat masuk. Periksa koneksi internet, lalu coba lagi.')
+      return
+    } finally {
+      setSubmitting(false)
+    }
 
     if (!result.success) {
       toast.error(result.error || 'Login gagal.')
