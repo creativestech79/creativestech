@@ -23,16 +23,29 @@ export default function Login() {
   useEffect(() => {
     let cancelled = false;
 
-    fetchSettings().then(({ data, error }) => {
-      if (cancelled) return;
-      if (error) {
-        setSettingsError(true);
-        toast.error(`Gagal memeriksa pengaturan pendaftaran: ${error}`);
-      } else {
+    async function checkRegistrationSettings() {
+      try {
+        const { data, error } = await fetchSettings();
+        if (cancelled) return;
+        if (error) {
+          setSettingsError(true);
+          toast.error(`Pengaturan pendaftaran gagal dimuat: ${error}`);
+          return;
+        }
         setRegistrationEnabled(Boolean(data?.allowRegistration));
+      } catch (error) {
+        if (cancelled) return;
+        console.error('Gagal memeriksa pengaturan pendaftaran:', error);
+        setSettingsError(true);
+        toast.error(
+          'Tidak dapat terhubung ke Supabase untuk memeriksa pendaftaran. Periksa koneksi internet dan pengaturan Supabase, lalu muat ulang halaman.',
+        );
+      } finally {
+        if (!cancelled) setSettingsLoading(false);
       }
-      setSettingsLoading(false);
-    });
+    }
+
+    checkRegistrationSettings();
 
     return () => {
       cancelled = true;

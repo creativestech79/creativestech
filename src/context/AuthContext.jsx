@@ -25,13 +25,6 @@ export const DEMO_ACCOUNTS = [
   { email: 'editor@pauldesign.co.id', password: 'editor123', role: 'editor', name: 'Editor Website' },
 ]
 
-function roleFromDemoEmail(email) {
-  const value = String(email || '').toLowerCase()
-  if (value.includes('admin')) return 'admin'
-  if (value.includes('editor')) return 'editor'
-  return 'user'
-}
-
 function readDemoSession() {
   try {
     const raw = window.localStorage.getItem(DEMO_SESSION_KEY)
@@ -156,23 +149,24 @@ export function AuthProvider({ children }) {
     }
 
     if (!isSupabaseConfigured) {
-      // Demo: kredensial apa pun minimal 6 karakter diterima.
-      if (String(password).length < 6) {
-        return { success: false, error: 'Password minimal 6 karakter.' }
+      const account = DEMO_ACCOUNTS.find(
+        (demoAccount) => demoAccount.email === cleanEmail && demoAccount.password === password,
+      )
+      if (!account) {
+        return { success: false, error: 'Email atau password akun demo salah. Pilih akun demo yang tersedia.' }
       }
+
       const demoSession = {
-        email: cleanEmail,
-        name:
-          DEMO_ACCOUNTS.find((account) => account.email === cleanEmail)?.name ||
-          cleanEmail.split('@')[0],
-        role: roleFromDemoEmail(cleanEmail),
+        email: account.email,
+        name: account.name,
+        role: account.role,
         isDemo: true,
         loggedInAt: new Date().toISOString(),
       }
       writeDemoSession(demoSession)
       setSession(demoSession)
       setProfile({
-        id: `demo-${cleanEmail}`,
+        id: `demo-${account.email}`,
         name: demoSession.name,
         email: demoSession.email,
         role: demoSession.role,
@@ -189,7 +183,7 @@ export function AuthProvider({ children }) {
     if (error) {
       const message =
         error.message === 'Invalid login credentials'
-          ? 'Email atau password salah.'
+          ? 'Email atau password salah. Akun demo hanya berlaku saat Supabase belum terhubung. Jika Supabase aktif, daftarkan akun di Supabase Auth dan atur perannya di tabel profiles.'
           : error.message
       return { success: false, error: message }
     }

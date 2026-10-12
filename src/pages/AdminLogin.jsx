@@ -89,6 +89,13 @@ export default function AdminLogin() {
               description="Supabase belum terhubung. Gunakan akun demo di bawah untuk mencoba panel admin."
             />
           )}
+          {!isDemo && (
+            <Alert
+              variant="warning"
+              title="Login Supabase"
+              description="Supabase sedang terhubung, jadi akun demo tidak berlaku. Gunakan akun yang sudah terdaftar di Supabase Auth; peran admin/editor diatur pada tabel profiles."
+            />
+          )}
 
           <Card className="shadow-sm">
             <CardHeader className="text-center">
