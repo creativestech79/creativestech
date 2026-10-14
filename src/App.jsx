@@ -8,7 +8,6 @@ import {
 } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import AdminBar from './components/AdminBar'
 import Home from './pages/Home'
 import About from './pages/About'
 import Project from './pages/Project'
@@ -104,7 +103,6 @@ export default function App() {
           element={
             <>
               <Navbar />
-              <AdminBar />
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchProjects } from '../../lib/api';
 import { useStoreSync } from '../../lib/useStoreSync';
+import ProjectPlaceholders from '../../components/ProjectPlaceholders';
 
 const SERVICES = [
   { icon: 'fa-network-wired',    title: 'Jaringan & Networking',     desc: 'Instalasi, konfigurasi, dan troubleshooting jaringan LAN/WAN, WiFi, dan infrastruktur jaringan.' },
@@ -28,6 +29,7 @@ export default function ITSolution() {
     load();
   }, [load]);
   useStoreSync(load);
+  const showPlaceholders = projects.length === 0 || projects.every((project) => project.is_placeholder);
 
   return (
     <>
@@ -89,18 +91,11 @@ export default function ITSolution() {
               </div>
             )}
 
-            {!loading && projects.length === 0 && (
-              <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', borderRadius: '1rem' }}>
-                <i className="fa-solid fa-headset" style={{ fontSize: '3rem', color: 'var(--brand-primary)', marginBottom: '1rem', display: 'block' }}></i>
-                <h3 style={{ marginBottom: '0.5rem' }}>Segera Hadir</h3>
-                <p style={{ color: '#6b7280' }}>Portofolio IT Consultant sedang disiapkan. Hubungi kami untuk konsultasi lebih lanjut.</p>
-                <Link to="/contact" className="btn btn-primary" style={{ marginTop: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '0.5rem', textDecoration: 'none' }}>
-                  <i className="fa-solid fa-comments"></i> Konsultasi Sekarang
-                </Link>
-              </div>
+            {!loading && showPlaceholders && (
+              <ProjectPlaceholders category="it" />
             )}
 
-            {!loading && projects.length > 0 && (
+            {!loading && !showPlaceholders && (
               <div className="projects-grid">
                 {projects.map(p => (
                   <Link

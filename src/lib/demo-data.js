@@ -38,6 +38,7 @@ export const DEMO_PROJECTS = [
     slug: 'project-creative-design',
     category: 'design',
     status: 'published',
+    is_placeholder: true,
     description:
       'Desain identitas visual, branding, dan materi promosi yang konsisten untuk membangun citra merek yang kuat dan mudah diingat.',
     content:
@@ -55,6 +56,7 @@ export const DEMO_PROJECTS = [
     slug: 'project-multimedia',
     category: 'media',
     status: 'published',
+    is_placeholder: true,
     description:
       'Produksi konten multimedia interaktif: photoshoot, videoshoot, video promosi, motion graphic, animasi 3D, serta konten sosial media.',
     content:
@@ -72,6 +74,7 @@ export const DEMO_PROJECTS = [
     slug: 'project-it-consultant',
     category: 'it',
     status: 'published',
+    is_placeholder: true,
     description:
       'Konsultasi teknologi menyeluruh mulai dari audit infrastruktur, perancangan arsitektur, perawatan, instalasi, hingga perbaikan.',
     content:
@@ -89,6 +92,7 @@ export const DEMO_PROJECTS = [
     slug: 'project-web-development',
     category: 'web',
     status: 'published',
+    is_placeholder: true,
     description:
       'Pengembangan website dan aplikasi web responsif yang cepat, aman, serta SEO-friendly.',
     content:
@@ -106,6 +110,7 @@ export const DEMO_PROJECTS = [
     slug: 'project-cctv-specialist',
     category: 'security',
     status: 'published',
+    is_placeholder: true,
     description:
       'Instalasi dan konfigurasi sistem CCTV untuk keamanan rumah, ruko, maupun kantor.',
     content:

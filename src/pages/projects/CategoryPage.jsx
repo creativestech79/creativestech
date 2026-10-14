@@ -4,6 +4,7 @@ import { fetchProjects } from '@/lib/api'
 import { parseServiceLines } from '@/lib/content-defaults'
 import { usePageContent } from '@/lib/usePageContent'
 import { useStoreSync } from '@/lib/useStoreSync'
+import ProjectPlaceholders from '@/components/ProjectPlaceholders'
 
 const SERVICE_ICONS = {
   design: ['fa-id-card', 'fa-print', 'fa-mobile', 'fa-book-open', 'fa-shirt', 'fa-image'],
@@ -36,6 +37,7 @@ export default function CategoryPage({ section, category, icon, breadcrumbTitle 
   const services = parseServiceLines(content.services)
   const tools = String(content.tools || '').split(',').map((tool) => tool.trim()).filter(Boolean)
   const serviceIcons = SERVICE_ICONS[section] || []
+  const showPlaceholders = projects.length === 0 || projects.every((project) => project.is_placeholder)
 
   return (
     <>
@@ -101,15 +103,8 @@ export default function CategoryPage({ section, category, icon, breadcrumbTitle 
                 <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '2rem', display: 'block', marginBottom: '1rem' }}></i>
                 Memuat proyek...
               </div>
-            ) : projects.length === 0 ? (
-              <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', borderRadius: '1rem' }}>
-                <i className={`fa-solid ${icon}`} style={{ fontSize: '3rem', color: 'var(--brand-primary)', marginBottom: '1rem', display: 'block' }}></i>
-                <h3 style={{ marginBottom: '0.5rem' }}>{content.emptyTitle}</h3>
-                <p style={{ color: '#6b7280' }}>{content.emptyDescription}</p>
-                <Link to="/contact" className="btn btn-primary" style={{ marginTop: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '0.5rem', textDecoration: 'none' }}>
-                  <i className="fa-solid fa-comments"></i> Konsultasi Sekarang
-                </Link>
-              </div>
+            ) : showPlaceholders ? (
+              <ProjectPlaceholders category={category} />
             ) : (
               <div className="projects-grid">
                 {projects.map((project) => (

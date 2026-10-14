@@ -522,6 +522,19 @@ body:not(.admin-scope) a {
   font-size: 0.75rem;
   font-weight: bold;
 }
+.project-demo-flag {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  padding: 0.3rem 0.6rem;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, .78);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
 .project-overlay {
   position: absolute;
   inset: 0;
@@ -571,6 +584,155 @@ body:not(.admin-scope) a {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
   box-shadow: var(--glass-shadow);
+}
+
+.project-placeholder-section {
+  display: grid;
+  gap: 1.5rem;
+}
+.project-placeholder-section .projects-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+}
+.project-placeholder-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 0.85rem;
+  background: rgba(168, 85, 247, 0.08);
+}
+.project-placeholder-note-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2.5rem;
+  height: 2.5rem;
+  color: var(--brand-primary);
+  border-radius: 0.75rem;
+  background: rgba(168, 85, 247, 0.14);
+}
+.project-placeholder-note strong {
+  display: block;
+  margin-bottom: 0.15rem;
+}
+.project-placeholder-note p,
+.project-placeholder-cta p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.project-placeholder-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 230px;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 72% 20%, color-mix(in srgb, var(--placeholder-accent) 32%, transparent), transparent 45%),
+    linear-gradient(135deg, #111827 5%, #17152b 55%, #0f172a);
+}
+.project-placeholder-art::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: '';
+  opacity: 0.2;
+  background-image: linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(135deg, black, transparent 75%);
+}
+.project-placeholder-orbit {
+  position: absolute;
+  z-index: -1;
+  width: 210px;
+  height: 210px;
+  border: 1px solid color-mix(in srgb, var(--placeholder-accent) 45%, transparent);
+  border-radius: 50%;
+}
+.project-placeholder-orbit-one {
+  transform: translate(48%, -30%);
+}
+.project-placeholder-orbit-two {
+  width: 145px;
+  height: 145px;
+  transform: translate(52%, -34%);
+}
+.project-placeholder-counter,
+.project-placeholder-demo-label {
+  position: absolute;
+  top: 1rem;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.project-placeholder-counter {
+  left: 1.1rem;
+}
+.project-placeholder-demo-label {
+  right: 1rem;
+  padding: 0.35rem 0.6rem;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, .62);
+  letter-spacing: 0.08em;
+}
+.project-placeholder-artwork {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+  filter: drop-shadow(0 8px 28px color-mix(in srgb, var(--placeholder-accent) 32%, transparent));
+  transform: rotate(-5deg);
+}
+.project-placeholder-artwork i {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  color: var(--placeholder-accent);
+  border: 1px solid color-mix(in srgb, var(--placeholder-accent) 60%, transparent);
+  border-radius: 1.2rem;
+  background: rgba(15, 23, 42, .75);
+  font-size: 1.6rem;
+}
+.project-placeholder-artwork span {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.project-placeholder-type {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  color: var(--brand-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.project-placeholder-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.85rem;
+  background: rgba(30, 41, 59, 0.42);
+}
+.project-placeholder-cta h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+.project-placeholder-cta .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  padding: 0.7rem 1rem;
 }
 
 /* Contact Page Styles */

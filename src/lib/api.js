@@ -23,7 +23,7 @@ const STORAGE_KEY = 'pdits.demo.store'
 
 // Naikkan angka ini setiap kali data contoh (demo-data.js) berubah isinya,
 // agar store demo lama di browser otomatis di-reset ke data terbaru.
-const SEED_VERSION = 2
+const SEED_VERSION = 3
 
 const clone = (value) => JSON.parse(JSON.stringify(value))
 

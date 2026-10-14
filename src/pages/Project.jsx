@@ -23,11 +23,11 @@ const FILTER_CATEGORIES = [
 ];
 
 const DEFAULT_PROJECTS = [
-  { id: 'default-1', title: 'Creative Design', category: 'design',   description: 'Desain identitas visual, branding, dan materi promosi yang konsisten untuk membangun citra merek yang kuat dan mudah diingat.', image_url: null },
-  { id: 'default-2', title: 'Multimedia',       category: 'media',    description: 'Produksi konten multimedia interaktif: video promosi, motion graphic, animasi 3D, serta konten sosial media.', image_url: null },
-  { id: 'default-3', title: 'IT Consultant',    category: 'it',       description: 'Konsultasi teknologi menyeluruh mulai dari audit infrastruktur, perancangan arsitektur, hingga migrasi aplikasi.', image_url: null },
-  { id: 'default-4', title: 'Web Development',  category: 'web',      description: 'Pengembangan website dan aplikasi web responsif yang cepat, aman, serta SEO-friendly.', image_url: null },
-  { id: 'default-5', title: 'CCTV Specialist',  category: 'security', description: 'Instalasi dan konfigurasi sistem CCTV untuk keamanan rumah, ruko, maupun kantor.', image_url: null },
+  { id: 'default-1', title: 'Creative Design', category: 'design', is_placeholder: true, description: 'Desain identitas visual, branding, dan materi promosi yang konsisten untuk membangun citra merek yang kuat dan mudah diingat.', image_url: null },
+  { id: 'default-2', title: 'Multimedia',       category: 'media', is_placeholder: true, description: 'Produksi konten multimedia interaktif: video promosi, motion graphic, animasi 3D, serta konten sosial media.', image_url: null },
+  { id: 'default-3', title: 'IT Consultant',    category: 'it', is_placeholder: true, description: 'Konsultasi teknologi menyeluruh mulai dari audit infrastruktur, perancangan arsitektur, hingga migrasi aplikasi.', image_url: null },
+  { id: 'default-4', title: 'Web Development',  category: 'web', is_placeholder: true, description: 'Pengembangan website dan aplikasi web responsif yang cepat, aman, serta SEO-friendly.', image_url: null },
+  { id: 'default-5', title: 'CCTV Specialist',  category: 'security', is_placeholder: true, description: 'Instalasi dan konfigurasi sistem CCTV untuk keamanan rumah, ruko, maupun kantor.', image_url: null },
 ];
 
 export default function Project() {
@@ -108,7 +108,7 @@ export default function Project() {
                     return (
                       <Link
                         key={project.id}
-                        to={project.slug ? `/project/${project.slug}` : catInfo.route}
+                        to={CATEGORY_MAP[project.category] ? catInfo.route : project.slug ? `/project/${project.slug}` : '/project'}
                         style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
                       >
                         <article
@@ -116,14 +116,15 @@ export default function Project() {
                           data-category={catInfo.label}
                           tabIndex="0"
                           role="article"
-                          aria-label={`Lihat detail ${catInfo.label}`}
+                          aria-label={`Lihat keterangan ${catInfo.label}`}
                         >
                           <div className="project-img-box">
                             <img src={imgSrc} alt={catInfo.label} loading="lazy" />
                             <span className="project-badge">{catInfo.label}</span>
+                            {project.is_placeholder && <span className="project-demo-flag">CONTOH DEMO</span>}
                             <div className="project-overlay">
                               <span className="btn btn-primary btn-sm">
-                                <i className="fa-solid fa-expand"></i> Detail Proyek
+                                <i className="fa-solid fa-arrow-right"></i> Lihat Keterangan
                               </span>
                             </div>
                           </div>
