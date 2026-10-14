@@ -126,7 +126,7 @@ export default function AdminLogin() {
                     autoComplete="username"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    placeholder="admin@pauldesign.co.id"
+                    placeholder={isDemo ? DEMO_ACCOUNTS[0].email : 'nama@domain.com'}
                     required
                   />
                 </div>

@@ -1,7 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageContent } from '../lib/usePageContent';
 import { parseContentList } from '../lib/content-defaults';
+
+const SLIDES = [
+  '/assets/images/slides/slide1.jpg',
+  '/assets/images/slides/slide2.jpg',
+  '/assets/images/slides/slide3.jpg',
+];
 
 const TEASER_CARDS = [
   { icon: 'fa-user-gear', path: '/about', buttonFallback: 'Buka Halaman About' },
@@ -9,194 +15,180 @@ const TEASER_CARDS = [
   { icon: 'fa-location-dot', path: '/contact', buttonFallback: 'Buka Halaman Contact' },
 ];
 
+const PROJECT_TAGS = [
+  ['fa-palette', 'Creative Design'],
+  ['fa-film', 'Multimedia'],
+  ['fa-headset', 'IT Consultant'],
+  ['fa-code', 'Web Development'],
+  ['fa-video', 'CCTV Specialist'],
+];
+
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const content = usePageContent('home');
-  const teaserCards = parseContentList(content.teaserCards).map((line) => {
-    const [title, description, button] = line.split('|').map((part) => part.trim());
-    return { title, description, button };
-  }).filter((card) => card.title);
-  const slides = [
-    "./assets/images/slides/slide1.jpg",
-    "./assets/images/slides/slide2.jpg",
-    "./assets/images/slides/slide3.jpg"
-  ];
+  const teaserCards = parseContentList(content.teaserCards)
+    .map((line) => {
+      const [title, description, button] = line.split('|').map((part) => part.trim());
+      return { title, description, button };
+    })
+    .filter((card) => card.title);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  const nextSlide = () => setCurrentSlide((current) => (current + 1) % SLIDES.length);
+  const prevSlide = () => setCurrentSlide((current) => (current - 1 + SLIDES.length) % SLIDES.length);
 
-  // Auto slide every 5 seconds
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
     const timer = setInterval(nextSlide, 5000);
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, []);
 
   return (
-    <div className="home-page-wrapper">
-      <div className="container hero-container" style={{ padding: '40px 0 80px', display: 'flex', flexWrap: 'wrap', gap: '2rem', alignItems: 'center' }}>
-        {/* Hero Text Column */}
-        <div className="hero-content" style={{ flex: '1 1 400px' }}>
-          <div className="hero-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'var(--surface-color)', padding: '0.5rem 1rem', borderRadius: '2rem', border: '1px solid var(--border-color)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
-            <span className="badge-dot" style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span>
-            <span>{content.heroBadge}</span>
+    <main className="home-page-wrapper">
+      <section className="home-hero" aria-labelledby="home-title">
+        <div className="home-hero-inner">
+          <div className="hero-content">
+            <div className="hero-badge">
+              <span className="badge-dot" aria-hidden="true" />
+              <span>{content.heroBadge}</span>
+            </div>
+
+            <h1 className="hero-title" id="home-title">
+              {content?.heroTitle || (
+                <>
+                  Membangun Solusi Digital
+                  <span className="hero-title-highlight">Eksklusif &amp; Skalabel</span>
+                </>
+              )}
+            </h1>
+
+            <p className="hero-subtitle">
+              Halo! Saya Paulus, seorang <span className="typewriter-text">IT Consultant</span>
+            </p>
+            <p className="hero-description">
+              {content?.heroSubtitle || 'Menggabungkan keahlian pengembangan creative design dan full-stack web, arsitektur cloud, serta UI/UX modern untuk menciptakan pengalaman digital terbaik.'}
+            </p>
+
+            <div className="hero-cta-group">
+              <Link to="/project" className="btn btn-primary hero-primary-cta">
+                <i className="fa-solid fa-layer-group" aria-hidden="true" />
+                {content?.heroButton || 'Lihat Portofolio Proyek'}
+                <i className="fa-solid fa-arrow-right hero-cta-arrow" aria-hidden="true" />
+              </Link>
+              <Link to="/about" className="btn btn-outline hero-secondary-cta">
+                Tentang Saya
+              </Link>
+            </div>
+
+            <div className="hero-stats" aria-label="Ringkasan pengalaman">
+              <div className="stat-item">
+                <strong className="stat-number">{content.statProjects}<span>+</span></strong>
+                <span className="stat-label">Proyek selesai</span>
+              </div>
+              <div className="stat-divider" aria-hidden="true" />
+              <div className="stat-item">
+                <strong className="stat-number">{content.statYears}<span>+</span></strong>
+                <span className="stat-label">Tahun pengalaman</span>
+              </div>
+              <div className="stat-divider" aria-hidden="true" />
+              <div className="stat-item">
+                <strong className="stat-number">{content.statSatisfaction}<span>%</span></strong>
+                <span className="stat-label">Kepuasan klien</span>
+              </div>
+            </div>
           </div>
 
-          <h1 className="hero-title" style={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1.2, marginBottom: '1.5rem' }}>
-            {content?.heroTitle || (
-              <>
-                Membangun Solusi Digital <br />
-                <span className="gradient-text" style={{ background: 'linear-gradient(to right, var(--brand-primary), #8b5cf6)', WebkitBackgroundClip: 'text', color: 'transparent' }}>Eksklusif & Skalabel</span>
-              </>
-            )}
-          </h1>
-
-          <div className="hero-subtitle" style={{ fontSize: '1.25rem', marginBottom: '1.5rem', fontWeight: 500 }}>
-            Halo! Saya Paulus, seorang <span id="typewriter" className="typewriter-text text-primary">IT Consultant</span>
-          </div>
-
-          <p className="hero-description" style={{ color: '#6b7280', fontSize: '1.125rem', marginBottom: '2rem', lineHeight: 1.6 }}>
-            {content?.heroSubtitle || 'Menggabungkan keahlian mendalam pada pengembangan Creative Design & Full-Stack Web, arsitektur cloud performa tinggi, serta estetika UI/UX modern untuk menciptakan pengalaman digital terbaik.'}
-          </p>
-
-          <div className="hero-cta-group" style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
-            <Link to="/project" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', borderRadius: '0.5rem', fontWeight: 'bold' }}>
-              <i className="fa-solid fa-layer-group" style={{ marginRight: '0.5rem' }}></i> {content?.heroButton || 'Lihat Portofolio Proyek'}
-            </Link>
-            <Link to="/about" className="btn btn-outline" style={{ padding: '0.75rem 1.5rem', borderRadius: '0.5rem', fontWeight: 'bold', border: '1px solid var(--border-color)' }}>
-              <i className="fa-solid fa-user-gear" style={{ marginRight: '0.5rem' }}></i> Tentang Saya
-            </Link>
-          </div>
-
-          {/* Hero Stat Counters */}
-          <div className="hero-stats" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-            <div className="stat-item">
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
-                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-color)' }}>{content.statProjects}</span>
-                <span className="stat-plus" style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--brand-primary)' }}>+</span>
+          <div className="hero-visual">
+            <figure className="hero-art-card" id="heroSlider">
+              <div className="hero-slides" aria-label="Pilihan karya">
+                {SLIDES.map((src, index) => (
+                  <img
+                    key={src}
+                    src={src}
+                    className={`hero-slide ${index === currentSlide ? 'is-active' : ''}`}
+                    alt={`Karya Paulus, gambar ${index + 1} dari ${SLIDES.length}`}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    aria-hidden={index !== currentSlide}
+                  />
+                ))}
               </div>
-              <div className="stat-label" style={{ fontSize: '0.875rem', color: '#6b7280' }}>Proyek Selesai</div>
-            </div>
-            <div className="stat-divider" style={{ width: '1px', height: '40px', background: 'var(--border-color)' }}></div>
-            <div className="stat-item">
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
-                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-color)' }}>{content.statYears}</span>
-                <span className="stat-plus" style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--brand-primary)' }}>+</span>
+
+              <button
+                type="button"
+                onClick={prevSlide}
+                className="hero-slide-btn hero-slide-prev"
+                aria-label="Lihat karya sebelumnya"
+              >
+                <i className="fa-solid fa-chevron-left" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={nextSlide}
+                className="hero-slide-btn hero-slide-next"
+                aria-label="Lihat karya berikutnya"
+              >
+                <i className="fa-solid fa-chevron-right" aria-hidden="true" />
+              </button>
+
+              <div className="hero-slide-dots" aria-label="Pilih gambar karya">
+                {SLIDES.map((slide, index) => (
+                  <button
+                    key={slide}
+                    type="button"
+                    onClick={() => setCurrentSlide(index)}
+                    className={`hero-slide-dot ${index === currentSlide ? 'active' : ''}`}
+                    aria-label={`Tampilkan gambar ${index + 1}`}
+                    aria-current={index === currentSlide ? 'true' : undefined}
+                  />
+                ))}
               </div>
-              <div className="stat-label" style={{ fontSize: '0.875rem', color: '#6b7280' }}>Tahun Pengalaman</div>
-            </div>
-            <div className="stat-divider" style={{ width: '1px', height: '40px', background: 'var(--border-color)' }}></div>
-            <div className="stat-item">
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
-                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-color)' }}>{content.statSatisfaction}</span>
-                <span className="stat-plus" style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--brand-primary)' }}>%</span>
-              </div>
-              <div className="stat-label" style={{ fontSize: '0.875rem', color: '#6b7280' }}>Satisfaction Rate</div>
-            </div>
+
+              <figcaption className="hero-art-overlay">
+                {PROJECT_TAGS.map(([icon, label]) => (
+                  <Link key={label} to="/project" className="hero-art-tag">
+                    <i className={`fa-solid ${icon}`} aria-hidden="true" />
+                    {label}
+                  </Link>
+                ))}
+              </figcaption>
+            </figure>
           </div>
         </div>
+      </section>
 
-        {/* Hero Visual (Creative Design, Multimedia Design & IT) */}
-        <div className="hero-visual" style={{ flex: '1 1 400px', position: 'relative' }}>
-          <figure className="hero-art-card" id="heroSlider" style={{ position: 'relative', borderRadius: '1.5rem', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
-            <div className="hero-slides" style={{ position: 'relative', height: '500px' }}>
-              {slides.map((src, index) => (
-                <img 
-                  key={index}
-                  src={src} 
-                  width="1600" 
-                  height="1600" 
-                  className={`hero-slide ${index === currentSlide ? 'is-active' : ''}`} 
-                  alt={`Karya Paulus Petrus P Sianipar - Slide ${index + 1}`} 
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                  style={{ 
-                    position: 'absolute', 
-                    top: 0, 
-                    left: 0, 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'cover',
-                    opacity: index === currentSlide ? 1 : 0,
-                    transition: 'opacity 0.5s ease-in-out'
-                  }}
-                />
-              ))}
-            </div>
-
-            <button onClick={prevSlide} className="hero-slide-btn hero-slide-prev" style={{ position: 'absolute', top: '50%', left: '1rem', transform: 'translateY(-50%)', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.8)', border: 'none', cursor: 'pointer', zIndex: 10 }}>
-              <i className="fa-solid fa-chevron-left"></i>
-            </button>
-            <button onClick={nextSlide} className="hero-slide-btn hero-slide-next" style={{ position: 'absolute', top: '50%', right: '1rem', transform: 'translateY(-50%)', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.8)', border: 'none', cursor: 'pointer', zIndex: 10 }}>
-              <i className="fa-solid fa-chevron-right"></i>
-            </button>
-
-            <div className="hero-slide-dots" style={{ position: 'absolute', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '0.5rem', zIndex: 10 }}>
-              {slides.map((_, index) => (
-                <button 
-                  key={index}
-                  type="button" 
-                  onClick={() => setCurrentSlide(index)}
-                  className={`hero-slide-dot ${index === currentSlide ? 'active' : ''}`} 
-                  style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', cursor: 'pointer', background: index === currentSlide ? 'var(--brand-primary)' : 'rgba(255,255,255,0.5)' }}
-                ></button>
-              ))}
-            </div>
-
-            <figcaption className="hero-art-overlay" style={{ position: 'absolute', bottom: '3.5rem', left: '1.5rem', right: '1.5rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap', zIndex: 10 }}>
-              <Link to="/project" className="hero-art-tag" style={{ background: 'rgba(0,0,0,0.6)', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '2rem', fontSize: '0.75rem', backdropFilter: 'blur(4px)' }}>
-                <i className="fa-solid fa-palette"></i> Creative Design
-              </Link>
-              <Link to="/project" className="hero-art-tag" style={{ background: 'rgba(0,0,0,0.6)', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '2rem', fontSize: '0.75rem', backdropFilter: 'blur(4px)' }}>
-                <i className="fa-solid fa-film"></i> Multimedia
-              </Link>
-              <Link to="/project" className="hero-art-tag" style={{ background: 'rgba(0,0,0,0.6)', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '2rem', fontSize: '0.75rem', backdropFilter: 'blur(4px)' }}>
-                <i className="fa-solid fa-headset"></i> IT Consultant
-              </Link>
-              <Link to="/project" className="hero-art-tag" style={{ background: 'rgba(0,0,0,0.6)', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '2rem', fontSize: '0.75rem', backdropFilter: 'blur(4px)' }}>
-                <i className="fa-solid fa-code"></i> Web Development
-              </Link>
-              <Link to="/project" className="hero-art-tag" style={{ background: 'rgba(0,0,0,0.6)', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '2rem', fontSize: '0.75rem', backdropFilter: 'blur(4px)' }}>
-                <i className="fa-solid fa-video"></i> CCTV Specialist
-              </Link>
-            </figcaption>
-          </figure>
-        </div>
-      </div>
-
-      <section className="home-teasers" style={{ padding: '80px 0', background: 'var(--bg-color)' }}>
+      <section className="home-teasers" aria-labelledby="teaser-title">
         <div className="container">
-          <div className="section-title-wrap text-center" style={{ marginBottom: '3rem' }}>
-            <span className="section-subtitle" style={{ color: 'var(--brand-primary)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>{content.teaserSubtitle}</span>
-            <h2 className="section-title" style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{content.teaserTitle}</h2>
+          <header className="section-title-wrap">
+            <span className="section-subtitle">{content.teaserSubtitle}</span>
+            <h2 className="section-title" id="teaser-title">{content.teaserTitle}</h2>
             {content?.aboutTeaser ? (
-              <div className="section-description" style={{ margin: '0 auto', maxWidth: '600px', color: '#6b7280' }} dangerouslySetInnerHTML={{ __html: content.aboutTeaser }} />
+              <div className="section-description" dangerouslySetInnerHTML={{ __html: content.aboutTeaser }} />
             ) : (
-              <p className="section-description" style={{ margin: '0 auto', maxWidth: '600px', color: '#6b7280' }}>
-                Jelajahi halaman lengkap kami untuk melihat profil, proyek terbaru, serta informasi kontak dan lokasi studio.
+              <p className="section-description">
+                Jelajahi profil, proyek terbaru, serta informasi kontak dan lokasi studio.
               </p>
             )}
-          </div>
+          </header>
 
-          <div className="home-teaser-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+          <div className="home-teaser-grid">
             {teaserCards.map((card, index) => {
               const preset = TEASER_CARDS[index] || TEASER_CARDS[0];
               return (
-                <div key={`${card.title}-${index}`} className="glass-card teaser-card" style={{ padding: '2rem', borderRadius: '1rem', border: '1px solid var(--border-color)', background: 'var(--surface-color)', transition: 'transform 0.3s' }}>
-                  <div className="teaser-icon" style={{ fontSize: '2rem', color: 'var(--brand-primary)', marginBottom: '1rem' }}>
-                    <i className={`fa-solid ${preset.icon}`}></i>
+                <article key={`${card.title}-${index}`} className="glass-card teaser-card">
+                  <div className="teaser-icon" aria-hidden="true">
+                    <i className={`fa-solid ${preset.icon}`} />
                   </div>
-                  <h3 className="teaser-title" style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{card.title}</h3>
-                  <p className="teaser-desc" style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.875rem', lineHeight: 1.6 }}>
-                    {card.description}
-                  </p>
-                  <Link to={preset.path} className="btn btn-outline btn-sm" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid var(--brand-primary)', color: 'var(--brand-primary)', textDecoration: 'none' }}>
-                    {card.button || preset.buttonFallback} <i className="fa-solid fa-arrow-right"></i>
+                  <h3 className="teaser-title">{card.title}</h3>
+                  <p className="teaser-desc">{card.description}</p>
+                  <Link to={preset.path} className="teaser-link">
+                    {card.button || preset.buttonFallback}
+                    <i className="fa-solid fa-arrow-right" aria-hidden="true" />
                   </Link>
-                </div>
+                </article>
               );
             })}
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
