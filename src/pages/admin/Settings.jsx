@@ -36,7 +36,10 @@ export default function Settings() {
       if (error) {
         toast.error(error)
       } else {
-        setValues(data || {})
+        setValues({
+          ...data,
+          siteName: data?.siteName === 'Paul Design & IT Solution' ? 'CreativeTech' : data?.siteName,
+        })
       }
       setLoading(false)
     }

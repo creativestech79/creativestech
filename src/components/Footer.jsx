@@ -21,7 +21,6 @@ export default function Footer() {
   }, [load]);
   useStoreSync(load);
 
-  const siteName = settings?.siteName || 'Paul Design & IT Solution';
   const tagline = settings?.tagline || 'Creative Designer & IT Specialist. Menyediakan layanan pembuatan website, UI/UX, desain grafis, editing multimedia, dan solusi IT terpadu.';
   const email = contact?.email || 'paulussianipar@gmail.com';
   const whatsapp = contact?.whatsapp || '+62 85162744708';
@@ -35,13 +34,12 @@ export default function Footer() {
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center mb-6">
               <img 
-                src="/assets/images/logo.jpe" 
-                alt={siteName}
+                src="/assets/images/creativestech-logo.png" 
+                alt="CreativeTech"
                 style={{ 
-                  height: '40px', 
+                  height: '48px', 
                   width: 'auto', 
-                  objectFit: 'contain',
-                  filter: 'drop-shadow(0px 0px 4px rgba(255, 255, 255, 1))' 
+                  objectFit: 'contain'
                 }} 
               />
             </Link>
@@ -102,7 +100,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500">
-          <p>&copy; {new Date().getFullYear()} {siteName}. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} CreativeTech. All rights reserved.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <Link to="#" className="hover:text-gray-400 transition-colors">Privacy Policy</Link>
             <Link to="#" className="hover:text-gray-400 transition-colors">Terms of Service</Link>

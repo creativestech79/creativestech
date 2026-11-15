@@ -127,7 +127,7 @@ export const DEMO_PROJECTS = [
 export const DEMO_CONTENT = CONTENT_DEFAULTS
 
 export const DEMO_SETTINGS = {
-  siteName: 'Paul Design & IT Solution',
+  siteName: 'CreativeTech',
   tagline:
     'Creative Designer & IT Specialist. Menyediakan layanan pembuatan website, UI/UX, desain grafis, editing multimedia, dan solusi IT terpadu.',
   contactEmail: 'paulussianipar@gmail.com',

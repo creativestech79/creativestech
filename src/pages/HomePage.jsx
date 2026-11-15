@@ -28,10 +28,11 @@ export default function HomePage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-6 border border-primary/20">
-              <Sparkles className="w-3.5 h-3.5" />
-              Paul Design & IT Solution
-            </div>
+            <img
+              src="/assets/images/creativestech-logo.png"
+              alt="CreativeTech"
+              className="mb-6 h-auto w-full max-w-[400px]"
+            />
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-6">
               <span className="gradient-text">{t.home.hero_title}</span>
             </h1>

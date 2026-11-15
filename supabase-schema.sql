@@ -1,5 +1,5 @@
 -- ============================================================
---  Paul Design & IT Solution — Schema Supabase
+--  CreativeTech — Schema Supabase
 --  Jalankan di Supabase SQL Editor.
 --
 --  Catatan:
@@ -99,7 +99,7 @@ create table if not exists public.content (
 -- fetchSettings / saveSettings — lihat SETTINGS_FIELDS_MAP.
 create table if not exists public.settings (
   id                 uuid primary key default gen_random_uuid(),
-  site_name          text not null default 'Paul Design & IT Solution',
+  site_name          text not null default 'CreativeTech',
   tagline            text default '',
   contact_email      text default '',
   default_language   text not null default 'id',
@@ -111,7 +111,7 @@ create table if not exists public.settings (
 
 -- Isi baris pengaturan awal.
 insert into public.settings (id, site_name)
-select gen_random_uuid(), 'Paul Design & IT Solution'
+select gen_random_uuid(), 'CreativeTech'
 where not exists (select 1 from public.settings);
 
 -- ─────────────────────── CONTACT MESSAGES ───────────────────

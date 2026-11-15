@@ -1,8 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { UserCircle, Menu, X, ChevronDown } from 'lucide-react';
-import { fetchSettings } from '../lib/api';
-import { useStoreSync } from '../lib/useStoreSync';
 
 const PROJECT_LINKS = [
   { to: '/project/creative-design', label: 'Creative Design' },
@@ -17,18 +15,7 @@ const navLinkClass = ({ isActive }) => `site-nav-link${isActive ? ' is-active' :
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
-  const [siteName, setSiteName] = useState('Paul Design & IT Solution');
   const location = useLocation();
-
-  const load = useCallback(async () => {
-    const { data } = await fetchSettings();
-    if (data?.siteName) setSiteName(data.siteName);
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-  useStoreSync(load);
 
   useEffect(() => {
     setIsOpen(false);
@@ -38,8 +25,8 @@ export default function Navbar() {
   return (
     <nav className="site-navbar" aria-label="Navigasi utama">
       <div className="site-navbar-inner">
-        <Link to="/" className="site-logo" aria-label={`${siteName} - Beranda`}>
-          <img src="/assets/images/logo.jpe" alt={siteName} />
+        <Link to="/" className="site-logo" aria-label="CreativeTech - Beranda">
+          <img src="/assets/images/creativestech-logo.png" alt="CreativeTech" />
         </Link>
 
         <button

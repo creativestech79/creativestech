@@ -1069,7 +1069,7 @@ body:not(.admin-scope) a {
 .site-logo img {
   display: block;
   width: auto;
-  height: 48px;
+  height: 54px;
   object-fit: contain;
 }
 
@@ -1632,7 +1632,7 @@ body:not(.admin-scope) a {
   }
 
   .site-logo img {
-    height: 42px;
+    height: 48px;
   }
 
   .site-menu-toggle {

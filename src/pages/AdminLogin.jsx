@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Eye, EyeOff, Loader2, Lock, LogIn, Sparkles } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff, Loader2, Lock, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { DEMO_ACCOUNTS, useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/button'
@@ -66,12 +66,12 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-muted/40">
       {/* Pita atas minimal */}
       <header className="flex h-14 items-center justify-between border-b bg-background px-5">
-        <Link
-          to="/admin/login"
-          className="flex items-center gap-2 text-sm font-bold"
-        >
-          <Sparkles className="h-5 w-5 text-primary" />
-          Paul Design &amp; IT Solution
+        <Link to="/admin/login" aria-label="CreativeTech - Admin Panel">
+          <img
+            src="/assets/images/creativestech-logo.png"
+            alt="CreativeTech"
+            className="h-10 w-auto max-w-[220px] object-contain"
+          />
         </Link>
         <div className="flex items-center gap-2">
           <Button asChild variant="ghost" size="sm">
@@ -112,7 +112,7 @@ export default function AdminLogin() {
               </div>
               <CardTitle className="text-xl">Admin Panel</CardTitle>
               <CardDescription>
-                Masuk untuk mengelola website Paul Design &amp; IT Solution
+                Masuk untuk mengelola website
               </CardDescription>
             </CardHeader>
 
