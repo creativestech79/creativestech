@@ -34,7 +34,7 @@ export default function Footer() {
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center mb-6">
               <img 
-                src="/assets/images/creativestech-logo.png" 
+                src="/assets/images/creativetech-logo.png" 
                 alt="CreativeTech"
                 style={{ 
                   height: '48px', 
@@ -75,6 +75,7 @@ export default function Footer() {
             <ul className="flex flex-col gap-3 text-sm text-gray-400">
               <li><Link to="/about" className="hover:text-primary transition-colors">Tentang Kami</Link></li>
               <li><Link to="/project" className="hover:text-primary transition-colors">Portofolio</Link></li>
+              <li><Link to="/prices" className="hover:text-primary transition-colors">Harga</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-colors">Kontak</Link></li>
             </ul>
           </div>

@@ -68,7 +68,7 @@ export default function AdminLogin() {
       <header className="flex h-14 items-center justify-between border-b bg-background px-5">
         <Link to="/admin/login" aria-label="CreativeTech - Admin Panel">
           <img
-            src="/assets/images/creativestech-logo.png"
+            src="/assets/images/creativetech-logo.png"
             alt="CreativeTech"
             className="h-10 w-auto max-w-[220px] object-contain"
           />

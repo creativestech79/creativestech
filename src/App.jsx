@@ -18,6 +18,7 @@ import ITSolution from './pages/projects/ITSolution'
 import WebDevelopment from './pages/projects/WebDevelopment'
 import CCTVSpecialist from './pages/projects/CCTVSpecialist'
 import Contact from './pages/Contact'
+import Prices from './pages/Prices'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Toaster from './components/ui/sonner'
@@ -113,6 +114,7 @@ export default function App() {
                 <Route path="/project/web-development" element={<WebDevelopment />} />
                 <Route path="/project/cctv-specialist" element={<CCTVSpecialist />} />
                 <Route path="/project/:slug" element={<ProjectDetail />} />
+                <Route path="/prices" element={<Prices />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />} />

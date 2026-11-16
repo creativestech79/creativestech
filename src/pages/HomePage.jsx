@@ -29,7 +29,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
           <div className="max-w-3xl">
             <img
-              src="/assets/images/creativestech-logo.png"
+              src="/assets/images/creativetech-logo.png"
               alt="CreativeTech"
               className="mb-6 h-auto w-full max-w-[400px]"
             />

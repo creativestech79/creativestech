@@ -26,7 +26,7 @@ export default function Navbar() {
     <nav className="site-navbar" aria-label="Navigasi utama">
       <div className="site-navbar-inner">
         <Link to="/" className="site-logo" aria-label="CreativeTech - Beranda">
-          <img src="/assets/images/creativestech-logo.png" alt="CreativeTech" />
+          <img src="/assets/images/creativetech-logo.png" alt="CreativeTech" />
         </Link>
 
         <button
@@ -68,6 +68,7 @@ export default function Navbar() {
             </div>
           </div>
 
+          <NavLink to="/prices" className={navLinkClass}>Harga</NavLink>
           <NavLink to="/contact" className={navLinkClass}>Kontak</NavLink>
           <NavLink to="/login" className="site-login-link">
             <UserCircle size={18} aria-hidden="true" />
