@@ -37,7 +37,7 @@ export default function Footer() {
                 src="/assets/images/creativetech-logo.png" 
                 alt="CreativeTech"
                 style={{ 
-                  height: '48px', 
+                  height: '40px',
                   width: 'auto', 
                   objectFit: 'contain'
                 }} 
